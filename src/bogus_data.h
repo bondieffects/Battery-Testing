@@ -2,6 +2,10 @@
 #define BOGUS_DATA_H
 
 #include <stdint.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 // Battery specifications
 #define BATTERY_NOMINAL_CAPACITY 3000  // mAh
 #define BATTERY_RATED_CYCLES     500   // cycles
@@ -134,5 +138,9 @@ const float battery_self_discharge_table[BATTERY_HEALTH_TABLE_SIZE] = {
     2.01, 2.04, 2.00, 2.10, 2.16, 2.13, 2.21, 2.31, 2.31, 2.28, 2.37,
     2.59, 2.52, 2.68, 2.92, 2.89, 3.12, 3.42, 4.38, 5.42, 6.43
 };
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // 

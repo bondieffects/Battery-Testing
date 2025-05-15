@@ -156,32 +156,32 @@ float readInternalResistance() {
 #define DISCHARGING 1
 
 bool state = CHARGING; // Initial state charging
-uint8_t index = 0;
+uint8_t table_index = 0;
 
 void loop() {
   /*LOTS OF PLACEHOLDERS, ONLY TO SHOW UPDATING IN REAL-TIME*/
 
   if (state == CHARGING) {
-    batteryVoltage = battery_charge_voltage[index];
-    internalResistance = battery_charge_internal_resistance[index];
-    cellTemp = battery_charge_cell_temp[index];
+    batteryVoltage = battery_charge_voltage[table_index];
+    internalResistance = battery_charge_resistance[table_index];
+    cellTemp = battery_charge_temperature[table_index];
   } else { // DISCHARGING
-    batteryVoltage = battery_discharge_voltage[index];
-    internalResistance = battery_discharge_internal_resistance[index];
-    cellTemp = battery_discharge_cell_temp[index];
+    batteryVoltage = battery_discharge_voltage[table_index];
+    internalResistance = battery_discharge_resistance[table_index];
+    cellTemp = battery_discharge_temperature[table_index];
   }
-  index = (index + 1) % PROFILE_SIZE; // increment through the profile array then wrap around
+  table_index = (table_index + 1) % PROFILE_SIZE; // increment through the profile array then wrap around
 
-  if batteryVoltage < minVoltage {
+  if (batteryVoltage < minVoltage) {
     minVoltage = batteryVoltage;
   }
-  if batteryVoltage > maxVoltage {
+  if (batteryVoltage > maxVoltage) {
     maxVoltage = batteryVoltage;
   }
-  if internalResistance < minResistance {
+  if (internalResistance < minResistance) {
     minResistance = internalResistance;
   }
-  if internalResistance > maxResistance {
+  if (internalResistance > maxResistance) {
     maxResistance = internalResistance;
   }
 
@@ -190,7 +190,7 @@ void loop() {
   powerCapability = get_power_capability(cycleCount);
   estCapacity = get_estimated_capacity(cycleCount);
   selfDischargeRate = get_self_discharge_rate(cycleCount);
-  if (state == DISCHARGING && index == 49) cycleCount++;
+  if (state == DISCHARGING && table_index == 49) cycleCount++;
 
   //batteryVoltage = readBatteryVoltage();
   //internalResistance = readInternalResistance();
