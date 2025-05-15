@@ -155,8 +155,8 @@ float readInternalResistance() {
 #define CHARGING 0
 #define DISCHARGING 1
 
-static bool state = CHARGING; // Initial state charging
-static uint8_t index = 0;
+bool state = CHARGING; // Initial state charging
+uint8_t index = 0;
 
 void loop() {
   /*LOTS OF PLACEHOLDERS, ONLY TO SHOW UPDATING IN REAL-TIME*/
