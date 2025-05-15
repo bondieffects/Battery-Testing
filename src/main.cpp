@@ -1,7 +1,9 @@
+#include <Arduino.h>
 #include <WiFi.h>
 #include <ESPAsyncWebServer.h>
 #include <AsyncTCP.h>
 #include <SPIFFS.h>
+#include "bogus_data.h"
 
 const char* ssid = "#######"; // Your network SSID (name)
 const char* password = "#######"; // Your network password
