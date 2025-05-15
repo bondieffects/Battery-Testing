@@ -5,8 +5,8 @@
 #include <SPIFFS.h>
 #include "bogus_data.h"
 
-const char* ssid = "#######"; // Your network SSID (name)
-const char* password = "#######"; // Your network password
+const char* ssid = "iPhone"; // Your network SSID (name)
+const char* password = "hoochiemama"; // Your network password
 
 AsyncWebServer server(80);
 AsyncWebSocket ws("/ws");
@@ -71,6 +71,8 @@ float readInternalResistance();
 
 void setup() {
   Serial.begin(115200);
+
+  Serial.println("Welcome to DCycled");
   pinMode(loadControlPin, OUTPUT);
   pinMode(chargingControlPin, OUTPUT);
   pinMode(batteryVoltagePin, INPUT);
@@ -205,6 +207,24 @@ void loop() {
   //estCapacity += 0.1;
   //cycleCount += 1;
   //selfDischargeRate += 0.1;
+
+  Serial.print("Data Sent: ");
+  Serial.print(" batteryVoltage: "); Serial.print(batteryVoltage);
+  Serial.print(", internalResistance: "); Serial.print(internalResistance);
+  Serial.print(", minVoltage: "); Serial.print(minVoltage);
+  Serial.print(", maxVoltage: "); Serial.print(maxVoltage);
+  Serial.print(", minResistance: "); Serial.print(minResistance);
+  Serial.print(", maxResistance: "); Serial.print(maxResistance);
+  Serial.print(", overallHealth: "); Serial.print(overallHealth);
+  Serial.print(", capacityRetention: "); Serial.print(capacityRetention);
+  Serial.print(", powerCapability: "); Serial.print(powerCapability);
+  Serial.print(", cellTemp: "); Serial.print(cellTemp);
+  Serial.print(", estCapacity: "); Serial.print(estCapacity);
+  Serial.print(", cycleCount: "); Serial.print(cycleCount);
+  Serial.print(", selfDischargeRate: "); Serial.println(selfDischargeRate);
+  Serial.println();
+
+
   notifyClients();
   delay(4800); // a charging/discharging cycle should take 8 mins
 }
