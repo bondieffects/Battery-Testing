@@ -150,21 +150,59 @@ float readInternalResistance() {
   return (voltageChange / current) * 1000.0; // Convert to milliohms
 }
 
+#define CHARGING 0
+#define DISCHARGING 1
+
+static bool state = CHARGING; // Initial state charging
+static uint8_t index = 0;
+
 void loop() {
   /*LOTS OF PLACEHOLDERS, ONLY TO SHOW UPDATING IN REAL-TIME*/
-  batteryVoltage = readBatteryVoltage();
-  internalResistance = readInternalResistance();
-  minVoltage += 0.1;
-  maxVoltage += 0.1;
-  minResistance += 0.1;
-  maxResistance += 0.1;
-  overallHealth += 0.1;
-  capacityRetention += 0.1;
-  powerCapability += 0.1;
-  cellTemp += 0.1;
-  estCapacity += 0.1;
-  cycleCount += 1;
-  selfDischargeRate += 0.1;
+
+  if (state == CHARGING) {
+    batteryVoltage = battery_charge_voltage[index];
+    internalResistance = battery_charge_internal_resistance[index];
+    cellTemp = battery_charge_cell_temp[index];
+  } else { // DISCHARGING
+    batteryVoltage = battery_discharge_voltage[index];
+    internalResistance = battery_discharge_internal_resistance[index];
+    cellTemp = battery_discharge_cell_temp[index];
+  }
+  index = (index + 1) % PROFILE_SIZE; // increment through the profile array then wrap around
+
+  if batteryVoltage < minVoltage {
+    minVoltage = batteryVoltage;
+  }
+  if batteryVoltage > maxVoltage {
+    maxVoltage = batteryVoltage;
+  }
+  if internalResistance < minResistance {
+    minResistance = internalResistance;
+  }
+  if internalResistance > maxResistance {
+    maxResistance = internalResistance;
+  }
+
+  overallHealth = get_battery_health(cycleCount);
+  capacityRetention = get_capacity_retention(cycleCount);
+  powerCapability = get_power_capability(cycleCount);
+  estCapacity = get_estimated_capacity(cycleCount);
+  selfDischargeRate = get_self_discharge_rate(cycleCount);
+  if (state == DISCHARGING && index == 49) cycleCount++;
+
+  //batteryVoltage = readBatteryVoltage();
+  //internalResistance = readInternalResistance();
+  //minVoltage += 0.1;
+  //maxVoltage += 0.1;
+  //minResistance += 0.1;
+  //maxResistance += 0.1;
+  //overallHealth += 0.1;
+  //capacityRetention += 0.1;
+  //powerCapability += 0.1;
+  //cellTemp += 0.1;
+  //estCapacity += 0.1;
+  //cycleCount += 1;
+  //selfDischargeRate += 0.1;
   notifyClients();
-  delay(2000);
+  delay(4800); // a charging/discharging cycle should take 8 mins
 }
