@@ -245,6 +245,11 @@
 </head>
 <body>
     <div class="container">
+<ul id="tabs" style="display: flex; list-style: none; padding: 0; margin-bottom: 20px;">
+  <li style="margin-right: 10px;"><button onclick="showTab('dashboard-tab')" style="padding: 10px;">Dashboard</button></li>
+  <li><button onclick="showTab('data-tab')" style="padding: 10px;">Data Table</button></li>
+</ul>
+<div id="dashboard-tab">
         <header>
             <h1>Lithium Ion Cell Health Monitor</h1>
         </header>
@@ -402,7 +407,25 @@
                 </div>
             </div>
         </div>
-    </div>
+    
+        </div><div id="data-tab" style="display:none;"><div class="card">
+            <h2>Data Table</h2>
+            <div style="overflow-x:auto;">
+                <table id="data-table">
+                    <thead>
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>OCV (V)</th>
+                            <th>Internal Resistance (mΩ)</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <br />
+            <button onclick="downloadCSV()">Download CSV</button>
+        </div>
+</div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script>
@@ -617,7 +640,13 @@
                     timestamps.shift();
                     timestamps.push(new Date());
                     
-                    // Update charts
+                    
+                    addRowToTable(
+                        new Date().toISOString().slice(0, 19).replace('T', ' '),
+                        ocvData[ocvData.length - 1],
+                        irData[irData.length - 1]
+                    );
+// Update charts
                     ocvChart.update();
                     irChart.update();
                     
@@ -779,6 +808,37 @@
                 addLogEntry('Test completed successfully');
             }
         });
-    </script>
+    
+        function addRowToTable(timestamp, ocv, ir) {
+            const table = document.getElementById("data-table").querySelector("tbody");
+            const row = table.insertRow();
+            row.insertCell(0).textContent = timestamp;
+            row.insertCell(1).textContent = ocv.toFixed(2);
+            row.insertCell(2).textContent = ir.toFixed(1);
+        }
+
+        function downloadCSV() {
+            const rows = document.querySelectorAll("#data-table tr");
+            let csv = "Timestamp,OCV (V),Internal Resistance (mΩ)\n";
+            rows.forEach(row => {
+                const cols = Array.from(row.querySelectorAll("td, th")).map(col => `"${col.innerText}"`).join(",");
+                csv += cols + "\n";
+            });
+            const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.setAttribute("href", url);
+            link.setAttribute("download", "battery_data.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function showTab(tabId) {
+            document.getElementById('dashboard-tab').style.display = 'none';
+            document.getElementById('data-tab').style.display = 'none';
+            document.getElementById(tabId).style.display = 'block';
+        }
+</script>
 </body>
 </html>
